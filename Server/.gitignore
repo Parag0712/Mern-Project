@@ -1,6 +1,9 @@
 # Logs
 logs
 *.log
+auth-validator.middlewar.js
+validate-middlewar.js
+auth-validator.js
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

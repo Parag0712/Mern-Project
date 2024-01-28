@@ -7,6 +7,7 @@ import { User } from '../models/user.model.js';
 
 
 
+
 // Validate Field
 function validateField(value, fieldName) {
     if (value.trim() === "") {
@@ -30,7 +31,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
+        const refreshToken =  user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
@@ -57,9 +58,9 @@ const register = asyncHandler(async (req, res) => {
     // If User Exist Then Error
 
     const existedUser = await User.findOne({
-        $or: [{ username: username }, { email: email }]
+        $or: [{ username: username }, { email: email }, { number: number }]
     });
-    if (existedUser) throw new ApiError(409, "User with email or username already exists");
+    if (existedUser) throw new ApiError(409, "User with email or username or number already exists");
 
 
     // Get File from multer
@@ -82,7 +83,7 @@ const register = asyncHandler(async (req, res) => {
         username: username,
         email: email,
         number: number,
-        isAdmin: isAdmin,
+        isAdmin: isAdmin || false,
         avatar: {
             imgId: avatarImage.public_id,
             imgUrl: avatarImage.url
@@ -93,16 +94,32 @@ const register = asyncHandler(async (req, res) => {
     user.password = undefined;
     user.refreshToken = undefined;
 
-    console.log(user);
 
     if (!user) {
         throw new ApiError(500, "Something went wrong while registering the user");
     }
 
+    // Access Token
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
+
+    //store in cookie 
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
     // Send Response 
-    return res.status(201).json(
-        new ApiResponse(200, user, "User Register Successfully")
-    );
+    return res
+        .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(200, {
+                user,
+                accessToken: accessToken,
+                refreshToken: refreshToken
+            }, "User Register Successfully")
+        );
 });
 
 // Login Method EndPoint
@@ -132,8 +149,6 @@ const login = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
-    console.log(accessToken);
-    console.log(refreshToken);
     //
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
@@ -159,9 +174,123 @@ const login = asyncHandler(async (req, res) => {
         )
 });
 
-const logout = asyncHandler(async(req,res)=>{
-    
+// Logout Function
+const logout = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $unset: {
+                refreshToken: ""
+            }
+        },
+        {
+            new: true
+        }
+    );
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "User Logged Out"))
 });
 
+// Get User Data
+const getUserDetails = asyncHandler(async (req, res) => {
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, { user: req.user }, "User fetched successfully")
+        )
+});
 
-export { register, login }
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { email, number, password } = req.body;
+
+    validateField(email);
+    validateField(password);
+
+    if (!number || isNaN(number) || number < 10) {
+        throw new ApiError(401, "Number is required and must be a number greater than or equal to 10");
+    }
+
+
+    // Check User Exits or not
+    const user = await User.findOne({ _id: req.user._id });
+
+    // if not exist in database then send error
+    if (!user) { throw new (404, "User does Not Exist"); }
+
+    const isPasswordValid = await user.isPasswordCorrect(password)
+
+
+    // Password valid or not 
+    if (!isPasswordValid) {
+        throw new (401, "Invalid user credentials");
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                $set: {
+                    email: email,
+                    number: number
+                }
+            },
+            {
+                new: true
+            }
+        ).select("-password -refreshToken");
+
+
+        // Return Response
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, { user }, "Account details updated successfully")
+            )
+    } catch (error) {
+        throw new ApiError(401, error)
+    }
+});
+
+const updateUserAvatarImage = asyncHandler(async (req, res) => {
+
+    
+    const avatarLocalPath = req.file.path;
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "Avatar Image is required");
+    }
+
+    // Validate maximum file size (5MB)
+    validateFile(avatarLocalPath, "10");
+
+    const user = await User.findById(req.user?._id).select('-password');
+
+    const oldImgId = user.avatar.imgId;
+
+    const avatarImage = await uploadOnCloudinary(avatarLocalPath);
+    if (!avatarImage) {
+        throw new ApiError(400, "Error while uploading a avatar");
+    }
+
+    const avatarImageDelete = await deleteFromCloudinary(oldImgId);
+
+    user.avatar.url = avatarImage.url;
+    user.avatar.imgId = avatarImage.public_id;
+    // //and save url
+    const updatedUser = await user.save({ validateBeforeSave: false });
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, updatedUser, "Avatar image updated successfully")
+        )
+})
+
+export { register, login, logout, getUserDetails, updateAccountDetails, updateUserAvatarImage }
