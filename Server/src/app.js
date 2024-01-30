@@ -30,11 +30,13 @@ app.use(cookieParser());
 // Here User Routes 
 import userRouter from './routes/user.route.js';
 import contactRouter from './routes/contact.route.js';
+import serviceRouter from './routes/service.route.js';
 import { errorMiddleware } from './middleware/error.middleware.js';
 
 app.use(errorMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/contacts", contactRouter);
+app.use("/api/v1/services",serviceRouter);
 
 app.get("/", (req, res) => {
     res.status(200).json("This is my api ");

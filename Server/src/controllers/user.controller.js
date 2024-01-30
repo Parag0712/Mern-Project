@@ -66,18 +66,16 @@ const register = asyncHandler(async (req, res) => {
     // Get File from multer
     const avatarLocalPath = req.file?.path;
 
-    if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar Image is required");
+    const avatarImage = "";
+    if (avatarLocalPath) {
+        validateFile(avatarLocalPath, "10");
+        avatarImage = await uploadOnCloudinary(avatarLocalPath);
+        if (!avatarImage) {
+            throw new ApiError(400, "Error while uploading a avatar");
+        }
+    
     }
-    validateFile(avatarLocalPath, "10");
-
-    const avatarImage = await uploadOnCloudinary(avatarLocalPath);
-    console.log(avatarImage);
-    if (!avatarImage) {
-        throw new ApiError(400, "Error while uploading a avatar");
-    }
-
-
+    
     // Create User In Database
     const user = await User.create({
         username: username,
@@ -85,8 +83,8 @@ const register = asyncHandler(async (req, res) => {
         number: number,
         isAdmin: isAdmin || false,
         avatar: {
-            imgId: avatarImage.public_id,
-            imgUrl: avatarImage.url
+            imgId: avatarImage?.public_id || "",
+            imgUrl: avatarImage?.url || "" 
         },
         password: password,
     })
