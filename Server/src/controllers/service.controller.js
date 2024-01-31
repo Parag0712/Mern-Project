@@ -23,13 +23,13 @@ const addService = asyncHandler(async (req, res) => {
 
     console.log(serviceImageLocalPath);
     if (!serviceImageLocalPath) {
-        throw new ApiError(400, "Image is required");
+        return res.status(400).json({message:"Image is required"})
     }
     const serviceImage = await uploadOnCloudinary(serviceImageLocalPath);
 
     console.log(serviceImage);
     if (!serviceImage) {
-        throw new ApiError(400, "Error while uploading a ServiceImage");
+        return res.status(400).json({message:"Error while uploading a ServiceImage"})
     }
 
     // Service Create
@@ -70,13 +70,13 @@ const updateService = asyncHandler(async (req, res) => {
     const serviceImageLocalPath = req.file.path;
 
     if (!serviceImageLocalPath) {
-        throw new ApiError(400, "Image is required");
+        return res.status(400).json({message:"Image is required"})
     }
     
     const serviceImage = await uploadOnCloudinary(serviceImageLocalPath);
 
     if (!serviceImage) {
-        throw new ApiError(400, "Error while uploading a ServiceImage");
+        return res.status(400).json({message:"Error while uploading a ServiceImage"})
     }
     // Delete From Cloudinary
     const deleteImage = await deleteFromCloudinary(imgId)
@@ -116,7 +116,7 @@ const deleteService = asyncHandler(async (req,res)=>{
     const service = await Service.findById(serviceId);
 
     if(!service){
-        throw new ApiError(400, "Data Not found");
+        return res.status(400).json({message:"Data Not found"})
     }
     const imgId = service.serviceImage.imgId;
     // Code For Delete Img from cloud 

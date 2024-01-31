@@ -1,8 +1,13 @@
 import React from 'react'
+import { AnimationContainer, BigFeature, HeroSection } from '../Components'
+
 
 function Home() {
   return (
-    <div>home</div>
+    <AnimationContainer>
+      <HeroSection></HeroSection>
+      <BigFeature></BigFeature>
+    </AnimationContainer>
   )
 }
 

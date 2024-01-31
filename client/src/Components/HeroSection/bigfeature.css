@@ -1,0 +1,185 @@
+
+.big-feature {
+    gap: 20px;
+    padding: 100px 0px;
+
+}
+
+.big-feature-right h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.big-feature-left {
+
+    flex-basis: 33%;
+}
+
+.big-feature-left img {
+    max-width: 100%;
+}
+
+.big-feature-right {
+    flex-basis: 66%;
+    max-width: 66%;
+    justify-content: center;
+    gap: 20px;
+}
+
+.big-feature-right p {
+    font-size: 16px;
+    line-height: 26px;
+}
+
+.flex-reverse {
+    flex-direction: row-reverse;
+}
+
+.card-details {
+    justify-content: space-around;
+    gap: 60px;
+}
+
+.cards-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* gap: 30px; */
+    gap: 20px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    width: 100%;
+    margin: 0;
+    padding: 45px 30px 40px;
+    height: 100%;
+    background: #fff;
+    transition: all .4s ease-in-out;
+    border-radius: 10px;
+}
+
+.card:hover {
+    background-color: var(--asset-color);
+    color: white !important;
+}
+
+.card:hover h3 {
+    transition: all .4s ease-in-out;
+}
+
+.card:hover h3,
+svg {
+    color: white !important;
+}
+
+.card-section-header h2 {
+    font-size: 36px;
+}
+
+.card-details h3 {
+    font-size: 18px;
+}
+
+.card-details p {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 26px;
+}
+
+.email-section-background {
+    background-color: #024AAD;
+}
+
+.email-section-left {
+    flex-basis: 60%;
+}
+
+
+.email-section-left p {
+    font-size: 18px;
+    line-height: 28px;
+}
+
+.email-section-left h2 {
+    font-size: 36px;
+}
+
+.email-section-left {
+    gap: 20px;
+}
+
+.email-section-right {
+    flex-basis: 40%;
+    ;
+}
+
+.email-section {
+    color: white;
+    padding: 100px 30px;
+    gap: 20px;
+    align-items: center;
+}
+
+.email-input {
+    height: 50px;
+}
+
+.email-input input:focus {
+    outline: none;
+    border: none;
+}
+
+.email-input input {
+    width: 60%;
+    color: black;
+    font-size: 14px;
+    height: 100%;
+}
+
+.email-btn {
+
+    height: 100%;
+    margin-left: -10px;
+    border: none;
+    background-color: black;
+    color: white;
+    padding: 15px 10px;
+}
+
+
+.Ethereum-section {
+    padding-block: 100px;
+    display: grid;
+    row-gap: 20px;
+    column-gap: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    /* border-bottom: 1px solid grey; */
+}
+
+.Ethereum-section-left-up {
+    gap: 20px;
+}
+
+.Ethereum-section h2 {
+    font-size: 36px;
+}
+
+.Ethereum-section h3 {
+    font-size: 18px;
+}
+
+.Ethereum-section p {
+    font-size: 16px;
+    line-height: 26px;
+}
+
+.Ethereum-section-right-up {
+    align-self: flex-start;
+}
+
+.Ethereum-section-right-up img {
+    max-width: 100%;
+
+}

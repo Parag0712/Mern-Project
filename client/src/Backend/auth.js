@@ -1,7 +1,8 @@
 import config from "../config/config";
 
+import axios from "axios";
 
-export class AuthService {
+class AuthService {
 
     async createAccount({username,email,number,password,isAdmin,avatar}){
         try {
@@ -47,4 +48,20 @@ export class AuthService {
             throw error;
         }
     }
+
+    // GetUser Data
+    async getUserData() {
+        try {
+            const url = `${config.backend_url}users/get-user`;
+            const response = await axios.get("api/v1/users/get-user");
+            console.log(response.data);
+            if(response.status =="200"){
+                return response.data;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
 }
+export const AuthServices = new AuthService()

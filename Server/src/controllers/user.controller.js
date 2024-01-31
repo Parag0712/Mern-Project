@@ -5,13 +5,10 @@ import ApiResponse from '../utils/ApiResponse.js';
 import { deleteFromCloudinary, uploadOnCloudinary } from '../utils/cloudinary.js';
 import { User } from '../models/user.model.js';
 
-
-
-
 // Validate Field
 function validateField(value, fieldName) {
     if (value.trim() === "") {
-        throw new ApiError(400, `${fieldName} is required`);
+        return res.status(400).json(`${fieldName} is required`)
     }
 }
 
@@ -22,7 +19,7 @@ function validateFile(avatarLocalPath, mb) {
     const fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
     const maxFileSizeInMegabytes = mb;
     if (fileSizeInMegabytes > maxFileSizeInMegabytes) {
-        throw new ApiError(400, `Avatar file exceeds the maximum size of ${mb}MB`);
+        return res.status(400).json(`Avatar file exceeds the maximum size of ${mb}MB`)
     }
 }
 
@@ -52,7 +49,10 @@ const register = asyncHandler(async (req, res) => {
     validateField(password, "password");
 
     if (!number || isNaN(number) || number < 10) {
-        throw new ApiError(401, "Number is required and must be a number greater than or equal to 10");
+
+        return res.status(401).json({
+            message:"Number is required and must be a number greater than or equal to 10"
+        })
     }
 
     // If User Exist Then Error
@@ -60,7 +60,9 @@ const register = asyncHandler(async (req, res) => {
     const existedUser = await User.findOne({
         $or: [{ username: username }, { email: email }, { number: number }]
     });
-    if (existedUser) throw new ApiError(409, "User with email or username or number already exists");
+    if (existedUser) {return res.status(409).json({
+        message:"User with email or username or number already exists"
+    })}
 
 
     // Get File from multer
@@ -71,9 +73,11 @@ const register = asyncHandler(async (req, res) => {
         validateFile(avatarLocalPath, "10");
         avatarImage = await uploadOnCloudinary(avatarLocalPath);
         if (!avatarImage) {
-            throw new ApiError(400, "Error while uploading a avatar");
+            return res.status(400).json(
+                {message:"Error while uploading a avatar"}
+            )
+            // throw new ApiError(400, "Error while uploading a avatar");
         }
-    
     }
     
     // Create User In Database
@@ -94,7 +98,9 @@ const register = asyncHandler(async (req, res) => {
 
 
     if (!user) {
-        throw new ApiError(500, "Something went wrong while registering the user");
+        return res.status(500).json(
+            {message:"Something went wrong while registering the user"}
+        )
     }
 
     // Access Token
@@ -126,7 +132,9 @@ const login = asyncHandler(async (req, res) => {
     console.log(username);
     console.log(email);
     if (!username && !email) {
-        throw new ApiError(400, "Username or Email is required");
+        return res.status(400).json({
+            message:"Username or Email is required"
+        })
     }
     validateField(password);
 
@@ -137,13 +145,13 @@ const login = asyncHandler(async (req, res) => {
 
 
     // if not exist in database then send error
-    if (!user) { throw new (404, "User does Not Exist"); }
+    if (!user) { return res.status(404).json({message:"User does Not Exist"}) }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     // If Password Is wrong so send error
     if (!isPasswordValid) {
-        throw new (401, "Invalid user credentials");
+        return res.status(401).json({message:"Invalid user credentials"})
     }
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
@@ -214,7 +222,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     validateField(password);
 
     if (!number || isNaN(number) || number < 10) {
-        throw new ApiError(401, "Number is required and must be a number greater than or equal to 10");
+        return res.status(401).json({message:"Number is required and must be a number greater than or equal to 10"})
     }
 
 
@@ -222,14 +230,16 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     const user = await User.findOne({ _id: req.user._id });
 
     // if not exist in database then send error
-    if (!user) { throw new (404, "User does Not Exist"); }
+    if (!user) { return res.status(404).json({message:"User does Not Exist"}) }
+    // if (!user) { throw new (404, "User does Not Exist"); }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
 
 
     // Password valid or not 
     if (!isPasswordValid) {
-        throw new (401, "Invalid user credentials");
+        return res.status(401).json({message:"Invalid user credentials"})
+        // throw new (401, "Invalid user credentials");
     }
 
     try {
@@ -263,7 +273,9 @@ const updateUserAvatarImage = asyncHandler(async (req, res) => {
     
     const avatarLocalPath = req.file.path;
     if (!avatarLocalPath) {
-        throw new ApiError(400, "Avatar Image is required");
+        return res.status(400).json({message:"Avatar Image is required"})
+
+        // throw new ApiError(400, "Avatar Image is required");
     }
 
     // Validate maximum file size (5MB)
@@ -275,7 +287,9 @@ const updateUserAvatarImage = asyncHandler(async (req, res) => {
 
     const avatarImage = await uploadOnCloudinary(avatarLocalPath);
     if (!avatarImage) {
-        throw new ApiError(400, "Error while uploading a avatar");
+        return res.status(400).json({message:"Error while uploading a avatar"})
+
+        // throw new ApiError(400, "Error while uploading a avatar");
     }
 
     const avatarImageDelete = await deleteFromCloudinary(oldImgId);
