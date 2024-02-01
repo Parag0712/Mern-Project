@@ -4,17 +4,39 @@ import './form.css'
 import { useForm } from 'react-hook-form'
 import { useScroll } from 'framer-motion'
 import Input from '../Common/Input'
+import { AuthServices } from '../../Backend/auth'
+import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { login } from '../../App/authSlice'
+import { loadingStart, loadingStop } from '../../App/loadingSlice'
+import { useNavigate } from 'react-router-dom'
 function RegisterForm() {
 
   const { register, handleSubmit } = useForm();
   const [emailError, setEmailError] = useState();
   const [passwordError, setPasswordError] = useState();
   const [userNameError, setUserNameError] = useState("");
-  const [phoneError,setPhoneError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
-  const handleRegister = (data)=>{
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  // Handle Register
+  const handleRegister = (data) => {
+    dispatch(loadingStart());
+    AuthServices.createAccount(data).then((value) => {
+      const userData = value.user;
+      toast.success(value.message);
+      dispatch(login({ userData }));
+      navigate('/');
+    }).catch((err) => {
+      toast.error(err)
+    }).finally(() => {
+      dispatch(loadingStop());
+    })
   }
+
+  
   return (
     <div className='form-container'>
       <img className='' src={registerImg} alt="" />

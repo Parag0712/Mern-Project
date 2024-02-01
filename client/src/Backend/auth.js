@@ -4,22 +4,17 @@ import axios from "axios";
 
 class AuthService {
 
-    async createAccount({username,email,number,password,isAdmin,avatar}){
+    // CreateAccount
+    async createAccount({username,email,number,password,isAdmin=false,avatar}){
         try {
-            const url = `${config.backend_url}users/register`;
-            const formData = new FormData();
-            formData.append('username', username);
-            formData.append('email', email);
-            formData.append('number', number);
-            formData.append('password', password);
-            formData.append('isAdmin', isAdmin);
-            formData.append('avatar', avatar);
-
             // Response
-            const response = await axios.post(url, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+            const response = await axios.post("api/v1/users/register", {
+                username,
+                email,
+                number,
+                password,
+                isAdmin,
+                avatar
             });
 
             // UserAccount
@@ -27,25 +22,33 @@ class AuthService {
             return userAccount;
             
         } catch (error) {
-            throw error
+            if(error.response.data){
+                throw error.response.data.message;
+            }else{
+                throw error
+            }
         }
     }
     
     // Login Form
     async login({ email="",username="", password }) {
         try {
-            const url = `${config.backend_url}users/login`;
-            const response = await axios.post(url, {
+            const url = "api/v1/users/logint";
+            const response = await axios.post("api/v1/users/login", {
                 email,
                 username,
                 password
             });
-
-            // Assuming the response contains user account data
+            
+            // UserAccount
             const userAccount = response.data;
             return userAccount;
         } catch (error) {
-            throw error;
+            if(error.response.data){
+                throw error.response.data.message;
+            }else{
+                throw error
+            }
         }
     }
 
@@ -54,13 +57,41 @@ class AuthService {
         try {
             const url = `${config.backend_url}users/get-user`;
             const response = await axios.get("api/v1/users/get-user");
-            console.log(response.data);
             if(response.status =="200"){
                 return response.data;
             }
         } catch (error) {
             console.log(error);
             return null;
+        }
+    }
+
+    // update Avatar
+
+    async updateAvatar(img) {
+        try {
+            const formData = new FormData();
+            formData.append('avatar', img); 
+            // Send a PATCH request to the server with the FormData containing the image file
+            const response = await axios.patch("api/v1/users/updateAvatar", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            // Handle the response from the server
+            return response.data; // Return the response data if needed
+        } catch (error) {
+            throw error
+        }
+    }
+
+    // Logout
+    async logout(){
+        try {
+            const response = await axios.post("api/v1/users/logout");
+            return response.data
+        } catch (error) {
+            console.log(error);
         }
     }
 }

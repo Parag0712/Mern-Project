@@ -3,16 +3,36 @@ import registerImg from '../../assets/images/login.png'
 import './form.css'
 import { useForm } from 'react-hook-form'
 import Input from '../Common/Input';
+import { AuthServices } from '../../Backend/auth';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { loadingStart, loadingStop } from '../../App/loadingSlice';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../../App/authSlice';
 function LoginForm() {
+    
 
     const { register, handleSubmit } = useForm();
     const [emailError, setEmailError] = useState();
     const [passwordError, setPasswordError] = useState();
     const [userNameError, setUserNameError] = useState("");
-
-    const loginHandle = async(data)=>{
-        console.log(data);
-    }   
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+   
+    // Logint Handler
+    const loginHandle = async (data) => {
+        dispatch(loadingStart());
+        AuthServices.login(data).then((value) => {
+            const userData = value.data.user;
+            dispatch(login({ userData }));
+            toast.success(value.message);
+            navigate('/');
+        }).catch((error) => {
+            toast.error(error)
+        }).finally(() => {
+            dispatch(loadingStop());
+        })
+    }
 
     return (
         <div className='form-container'>
@@ -27,7 +47,13 @@ function LoginForm() {
                         {
                         ...register("email", {
                             validate: {
+
                                 matchPattern: (value) => {
+                                    if (!value.trim()) {
+                                        setEmailError("");  // Clear the error message
+                                        return true;
+                                    }
+
                                     const isValid = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value);
                                     if (isValid) {
                                         setEmailError("");  // Assuming `clearHelperError` is a function to clear the error message
@@ -52,6 +78,12 @@ function LoginForm() {
                         ...register("username", {
                             validate: {
                                 matchPattern: (value) => {
+
+                                    if (!value.trim()) {
+                                        setUserNameError("");  // Clear the error message
+                                        return true;
+                                    }
+
                                     const isValid = /^[a-zA-Z0-9\s]+$/.test(value);
                                     if (isValid) {
                                         setUserNameError("");  // Assuming `clearHelperError` is a function to clear the error message
@@ -66,12 +98,12 @@ function LoginForm() {
                     />
                 </div>
                 <div className="form-control">
-                    <Input 
-                    label="Password"
-                    type="password"
-                    error={passwordError}
-                    placeholder="Enter Password"
-                    {
+                    <Input
+                        label="Password"
+                        type="password"
+                        error={passwordError}
+                        placeholder="Enter Password"
+                        {
                         ...register("password", {
                             validate: {
                                 matchPattern: (value) => {
@@ -85,8 +117,8 @@ function LoginForm() {
                                 }
                             }
                         })
-                    }
-                    
+                        }
+
                     />
                 </div>
                 <div className='form-control'>

@@ -15,6 +15,9 @@ import About from './pages/About.jsx'
 import Service from './pages/Service.jsx'
 import Contact from './pages/Contact.jsx'
 import Error from './pages/Error.jsx'
+import UserDash from './Components/Forms/UserDash.jsx'
+import Protected from './Components/Header/Protected.jsx'
+
 
 // Router
 const router = createBrowserRouter(
@@ -37,11 +40,22 @@ const router = createBrowserRouter(
     >
       {/* Here Other Object */}
       <Route index element={<Home />} />
-      <Route path='login' element={<Login />} f />
-      <Route path='register' element={<Register />} />
+      <Route path='login' element={
+        
+      <Protected authentication={false}>
+      <Login />
+    </Protected>
+      }  />
+      <Route path='register' element={
+      
+      <Protected authentication={false}>
+        <Register />   
+      </Protected>
+      } />
       <Route path='about' element={<About />} />
       <Route path='service' element={<Service />} />
       <Route path='contact' element={<Contact />} />
+      <Route path='userdashboard' element={<UserDash />} />
       <Route path="*" element={<Error />} />
     </Route>
   )

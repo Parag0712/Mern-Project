@@ -76,7 +76,6 @@ const register = asyncHandler(async (req, res) => {
             return res.status(400).json(
                 {message:"Error while uploading a avatar"}
             )
-            // throw new ApiError(400, "Error while uploading a avatar");
         }
     }
     
@@ -294,7 +293,7 @@ const updateUserAvatarImage = asyncHandler(async (req, res) => {
 
     const avatarImageDelete = await deleteFromCloudinary(oldImgId);
 
-    user.avatar.url = avatarImage.url;
+    user.avatar.imgUrl = avatarImage.url;
     user.avatar.imgId = avatarImage.public_id;
     // //and save url
     const updatedUser = await user.save({ validateBeforeSave: false });
