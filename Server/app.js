@@ -37,10 +37,10 @@ app.use("/api/v1/services", serviceRouter);
 
 
 
-app.use(express.static(path.join(__dirname, '/RealState/dist')));
+// app.use(express.static(path.join(__dirname, '/RealState/dist')));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'RealState', 'dist', 'index.html'));
-})
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'RealState', 'dist', 'index.html'));
+// })
 
 export { app }
