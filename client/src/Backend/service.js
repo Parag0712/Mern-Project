@@ -1,15 +1,17 @@
-import config from "../config/config";
-
 import axios from "axios";
 
 class DataService {
     // GetUser Data
 
+    constructor() {
+        this.api = axios.create({
+            baseURL: '/api/v1/',
+            withCredentials: true // Add withCredentials option
+        });
+    }
+
     async addService({ name, description, price, serviceImage, category }) {
-
         try {
-            // console.log(name,category,description,price,serviceImage[0]);
-
             const formData = new FormData();
             formData.append('name', name);
             formData.append('description', description);
@@ -17,9 +19,8 @@ class DataService {
             formData.append('price', price);
             formData.append('serviceImage', serviceImage[0]); // Assuming serviceImage is a File object
 
-            const response = await axios.post(`/api/v1/services/add-service`, formData);
-            const service = response.data;
-            return service;
+            const response = await this.api.post(`/services/add-service`, formData);
+            return response.data;
         } catch (error) {
             if (error.response.data) {
                 throw error.response.data.message;
@@ -29,17 +30,15 @@ class DataService {
         }
     }
 
-    //updateService
     async updateService({ name, description, price, category }, id) {
         try {
-            const response = await axios.patch(`/api/v1/services/update-service/${id}`, {
-                name:name,
-                description:description,
-                price:price,
-                category:category
+            const response = await this.api.patch(`/services/update-service/${id}`, {
+                name,
+                description,
+                price,
+                category
             });
-            const service = response.data;
-            return service;
+            return response.data;
         } catch (error) {
             if (error.response.data) {
                 throw error.response.data.message;
@@ -49,15 +48,12 @@ class DataService {
         }
     }
 
-    //updateServiceImg
-    async updateServiceImg({serviceImage},id) {
+    async updateServiceImg({ serviceImage }, id) {
         try {
-            console.log(serviceImage[0]);
             const formData = new FormData();
             formData.append('serviceImage', serviceImage[0]);
-            const response = await axios.patch(`/api/v1/services/updateserviceimg/${id}`, formData);
-            const service = response.data;
-            return service;
+            const response = await this.api.patch(`/services/updateserviceimg/${id}`, formData);
+            return response.data;
         } catch (error) {
             if (error.response.data) {
                 throw error.response.data.message;
@@ -65,16 +61,13 @@ class DataService {
                 throw error
             }
         }
-
     }
-    // 
+
     async deleteService(serviceId) {
-        // /deleteAccount
         try {
-            const response = await axios.post(`/api/v1/services/delete-service`, {
-                serviceId: serviceId
+            const response = await this.api.post(`/services/delete-service`, {
+                serviceId
             });
-            console.log(response);
             return response;
         } catch (error) {
             if (error.response.data) {
@@ -85,12 +78,9 @@ class DataService {
         }
     }
 
-    // getSingleService
     async getSingleService(id) {
-
-        
         try {
-            const response = await axios.get(`/api/v1/services/get-one-service/${id}`);
+            const response = await this.api.get(`/services/get-one-service/${id}`);
             if (response.status == "200") {
                 return response.data;
             }
@@ -100,11 +90,9 @@ class DataService {
         }
     }
 
-    //Get All Service
     async getService() {
         try {
-            const response = await axios.get(`/api/v1/services/get-service`);
-            console.log(response);
+            const response = await this.api.get(`/services/get-service`);
             if (response.status == "200") {
                 return response.data;
             }

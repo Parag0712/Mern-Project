@@ -1,29 +1,29 @@
-import config from "../config/config";
-
 import axios from "axios";
 
 class AuthService {
+    constructor() {
+        this.api = axios.create({
+            baseURL: '/api/v1/',
+            withCredentials: true
+        });
+    }
 
     // CreateAccount
     async createAccount({ username, email, number, password, isAdmin = false, avatar }) {
         try {
-            // Response
-            const response = await axios.post("/api/v1/users/register", {
+            const response = await this.api.post("/users/register", {
                 username,
                 email,
                 number,
                 password,
                 isAdmin,
                 avatar
-            },
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    withCredentials: true
-                });
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            // UserAccount
             const userAccount = response.data;
             return userAccount;
 
@@ -31,7 +31,7 @@ class AuthService {
             if (error.response.data) {
                 throw error.response.data.message;
             } else {
-                throw error
+                throw error;
             }
         }
     }
@@ -39,27 +39,23 @@ class AuthService {
     // Login Form
     async login({ email = "", username = "", password }) {
         try {
-            const response = await axios.post(`/api/v1/users/login`, {
+            const response = await this.api.post(`/users/login`, {
                 email,
                 username,
                 password
-            },
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            );
+            });
 
-            // UserAccount
             const userAccount = response.data;
             return userAccount;
         } catch (error) {
             if (error.response.data) {
                 throw error.response.data.message;
             } else {
-                throw error
+                throw error;
             }
         }
     }
@@ -67,11 +63,8 @@ class AuthService {
     // GetUser Data
     async getUserData() {
         try {
-            const url = `${config.backend_url}users/get-user`;
-            const response = await axios.get("/api/v1/users/get-user", {
-                withCredentials: true
-            });
-            if (response.status == "200") {
+            const response = await this.api.get("/users/get-user");
+            if (response.status === 200) {
                 return response.data;
             }
         } catch (error) {
@@ -81,51 +74,44 @@ class AuthService {
     }
 
     // update Avatar
-
     async updateAvatar(img) {
         try {
             const formData = new FormData();
             formData.append('avatar', img);
-            // Send a PATCH request to the server with the FormData containing the image file
-            const response = await axios.patch("/api/v1/users/updateAvatar", formData, {
+
+            const response = await this.api.patch("/users/updateAvatar", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                },
-            }, {
-                withCredentials: true
+                }
             });
-            // Handle the response from the server
-            return response.data; // Return the response data if needed
+
+            return response.data;
         } catch (error) {
-            throw error
+            throw error;
         }
     }
 
     async getAllUser() {
         try {
-            const response = await axios.get("/api/v1/users/getAllUsers", { withCredentials: true });
-            return response.data
+            const response = await this.api.get("/users/getAllUsers");
+            return response.data;
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 
-
-
     async deleteAccount(id) {
-        // /deleteAccount
         try {
-            // Response
-            const response = await axios.post("/api/v1/users/deleteAccount", {
+            const response = await this.api.post("/users/deleteAccount", {
                 id: id
             });
-            console.log(response);
             return response;
         } catch (error) {
             if (error.response.data) {
                 throw error.response.data.message;
             } else {
-                throw error
+                throw error;
             }
         }
     }
@@ -133,11 +119,13 @@ class AuthService {
     // Logout
     async logout() {
         try {
-            const response = await axios.post("/api/v1/users/logout");
-            return response.data
+            const response = await this.api.post("/users/logout");
+            return response.data;
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 }
-export const AuthServices = new AuthService()
+
+export const AuthServices = new AuthService();
