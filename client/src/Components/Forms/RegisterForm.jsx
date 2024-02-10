@@ -25,9 +25,12 @@ function RegisterForm() {
   const handleRegister = (data) => {
     dispatch(loadingStart());
     AuthServices.createAccount(data).then((value) => {
-      const userData = value.user;
+      const userData = value.data.user;
       toast.success(value.message);
       dispatch(login({ userData }));
+
+
+
       navigate('/');
     }).catch((err) => {
       toast.error(err)
@@ -36,7 +39,7 @@ function RegisterForm() {
     })
   }
 
-  
+
   return (
     <div className='form-container'>
       <img className='' src={registerImg} alt="" />

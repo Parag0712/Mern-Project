@@ -18,7 +18,6 @@ function LoginForm() {
     const [userNameError, setUserNameError] = useState("");
     const dispatch = useDispatch();
     const navigate = useNavigate();
-   
     // Logint Handler
     const loginHandle = async (data) => {
         dispatch(loadingStart());

@@ -1,6 +1,7 @@
 import { Contact } from "../models/contact.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+
 function validateField(value, fieldName) {
     if (value.trim() === "") {
         return res.status(400).json({ message: `${fieldName} is required` })

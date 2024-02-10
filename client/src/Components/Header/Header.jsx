@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom"
 import './Header.css'
 import Container from "../Common/Container";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, updateAvatar } from "../../App/authSlice";
 import { AuthServices } from "../../Backend/auth";
@@ -49,21 +49,21 @@ const Header = () => {
         },
     ];
 
-    
-    
-    const auth = useSelector((state)=>{
+
+    const auth = useSelector((state) => {
         return state.auth
     });
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
 
+
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         setFile(selectedFile);
 
-        AuthServices.updateAvatar(selectedFile).then((data)=>{
+        AuthServices.updateAvatar(selectedFile).then((data) => {
             const avatarUrl = data.data.avatar;
-            dispatch(updateAvatar({avatarUrl}));
+            dispatch(updateAvatar({ avatarUrl }));
         })
         // Optionally, you can submit the form automatically here
     };
@@ -113,15 +113,18 @@ const Header = () => {
                                     }
                                 })
                             }
-                            <li className="user-name">
+                            <li className={`user-name ${user == true ? "" : "hidden"}`}>
                                 <form encType="multipart/form-data">
                                     <input type="file" id="inputField" hidden onChange={handleFileChange} />
                                 </form>
-                                <img src={auth?.avatarUrl?.imgUrl || userImg } alt="User" className="user-image-nav"
+                                <img src={auth?.avatarUrl?.imgUrl || userImg} alt="User" className="user-image-nav"
                                     accept="image/png, image/jpg, image/jpeg, image/gif"
                                     onClick={() => document.querySelector('#inputField').click()}
                                 />
-                                <p>{auth.userData?.username}</p>
+                                <p>{user == true? auth.userData?.username:"" }</p>
+                            </li>
+                            <li className={auth.userData?.isAdmin ? "" : "hidden"}>
+                                <NavLink to="/admin">Admin</NavLink>
                             </li>
                         </ul>
                     </nav>

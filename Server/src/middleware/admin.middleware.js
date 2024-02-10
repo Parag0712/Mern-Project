@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 const verifyAdmin = asyncHandler(async (req, res, next) => {
     try {
         // Get token from cookie
+        
         const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "");
         
         if (!token) {
@@ -26,7 +27,7 @@ const verifyAdmin = asyncHandler(async (req, res, next) => {
         if(user.isAdmin == false){
             throw new ApiError(401, "You can't Access This Routes");
         }
-
+        
         // You Store in Your Object
         req.user = user;
         next();

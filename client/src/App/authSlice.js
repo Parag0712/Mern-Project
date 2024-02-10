@@ -3,7 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   status: false,
   userData: null,
-  avatarUrl:""
+  avatarUrl: "",
+  loading: true,
+  loaded: false,
 }
 
 // AuthSlice
@@ -19,14 +21,17 @@ const authSlice = createSlice({
       state.status = false;
       state.userData = null
     },
-    updateAvatar:(state,actions)=>{
-      state.avatarUrl =  actions.payload.avatarUrl
+    updateAvatar: (state, actions) => {
+      state.avatarUrl = actions.payload.avatarUrl
+    },
+    authLoaded: (state) => {
+      state.loaded = true
     }
   }
 })
 
 
 // Export Action 
-export const { login, logout,updateAvatar } = authSlice.actions;
+export const { login, logout, updateAvatar,authLoaded } = authSlice.actions;
 // Export Reduce
 export default authSlice.reducer;

@@ -2,30 +2,27 @@ import express from 'express';
 import cookieParser from 'cookie-parser'
 import express_session from 'express-session'
 import cors from 'cors'
+import path from 'path';
+
+const __dirname = path.resolve();
+
 
 const app = express();
 
 // Now Cors Which Site Request Allow
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
-    credential: true
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true
 }));
 
 // Setup For Express Session
-app.use(express_session(
-    {
-        resave: false,
-        saveUninitialized: false,
-        secret: "as"
-    }
-))
 
 //Now Here Your Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
-
 
 // Here User Routes 
 import userRouter from './routes/user.route.js';
@@ -36,10 +33,14 @@ import { errorMiddleware } from './middleware/error.middleware.js';
 app.use(errorMiddleware);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/contacts", contactRouter);
-app.use("/api/v1/services",serviceRouter);
+app.use("/api/v1/services", serviceRouter);
 
-app.get("/", (req, res) => {
-    res.status(200).json("This is my api ");
-});
+
+
+app.use(express.static(path.join(__dirname, '/RealState/dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'RealState', 'dist', 'index.html'));
+})
 
 export { app }

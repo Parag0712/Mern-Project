@@ -15,8 +15,16 @@ import About from './pages/About.jsx'
 import Service from './pages/Service.jsx'
 import Contact from './pages/Contact.jsx'
 import Error from './pages/Error.jsx'
-import UserDash from './Components/Forms/UserDash.jsx'
 import Protected from './Components/Header/Protected.jsx'
+import ProtectedAdmin from './Components/Header/ProtectedAdmin.jsx'
+
+import AdminUser from './pages/AdminUser.jsx'
+import AdminContact from './pages/AdminContact.jsx'
+import AdminService from './pages/AdminService.jsx'
+import AdminPage from './pages/AdminPage.jsx'
+import AdminForm from './pages/AdminForm.jsx'
+import AdminEditPage from './pages/AdminEditPage.jsx'
+import AdminAdd from './pages/AdminAdd.jsx'
 
 
 // Router
@@ -41,26 +49,31 @@ const router = createBrowserRouter(
       {/* Here Other Object */}
       <Route index element={<Home />} />
       <Route path='login' element={
-        
-      <Protected authentication={false}>
-      <Login />
-    </Protected>
-      }  />
+
+        <Protected authentication={false}>
+          <Login />
+        </Protected>
+      } />
       <Route path='register' element={
-      
-      <Protected authentication={false}>
-        <Register />   
-      </Protected>
+
+        <Protected authentication={false}>
+          <Register />
+        </Protected>
       } />
       <Route path='about' element={<About />} />
       <Route path='service' element={<Service />} />
       <Route path='contact' element={<Contact />} />
-      <Route path='userdashboard' element={<UserDash />} />
+      
+      <Route path='admin' element={<ProtectedAdmin><AdminPage /></ProtectedAdmin>} />
+      <Route path='users' element={<ProtectedAdmin> <AdminUser /> </ProtectedAdmin>} />
+      <Route path='adminservice' element={<ProtectedAdmin> <AdminService /> </ProtectedAdmin>} />
+      <Route path='admincontact' element={<ProtectedAdmin><AdminContact /></ProtectedAdmin>} />
+      <Route path='adminform' element={<ProtectedAdmin><AdminAdd /></ProtectedAdmin>} />
+      <Route path='editForm/:id?' element={<ProtectedAdmin><AdminEditPage /> </ProtectedAdmin>} />
       <Route path="*" element={<Error />} />
     </Route>
   )
 )
-
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store} >

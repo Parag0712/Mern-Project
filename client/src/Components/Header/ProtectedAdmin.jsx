@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector, } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-export default function Protected({ children, authentication = true }) {
+export default function ProtectedAdmin({ children, authentication = true }) {
     const navigate = useNavigate();
 
     // AuthStatus   
@@ -11,11 +11,9 @@ export default function Protected({ children, authentication = true }) {
     });
 
     useEffect(() => {
-        if (authentication && authStatus.status !== authentication) {
-            navigate('/signin')
-        } else if (!authentication && authStatus.status !== authentication) {
+        if (!authStatus?.userData?.isAdmin) {
             navigate('/')
-        }
+        } 
     }, [authStatus.status, authStatus, navigate, authentication])
 
     return <>{children}</>

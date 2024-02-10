@@ -10,7 +10,6 @@ function validateField(value, fieldName) {
     }
 }
 
-
 // Add Service 
 const addService = asyncHandler(async (req, res) => {
     const { name, description, category, price } = req.body;
@@ -23,13 +22,13 @@ const addService = asyncHandler(async (req, res) => {
 
     console.log(serviceImageLocalPath);
     if (!serviceImageLocalPath) {
-        return res.status(400).json({message:"Image is required"})
+        return res.status(400).json({ message: "Image is required" })
     }
     const serviceImage = await uploadOnCloudinary(serviceImageLocalPath);
 
     console.log(serviceImage);
     if (!serviceImage) {
-        return res.status(400).json({message:"Error while uploading a ServiceImage"})
+        return res.status(400).json({ message: "Error while uploading a ServiceImage" })
     }
 
     // Service Create
@@ -58,29 +57,35 @@ const getService = asyncHandler(async (req, res) => {
         )
 });
 
+const getOneService = asyncHandler(async (req, res) => {
+    const { serviceId } = req.params;
+    const service = await Service.findById(serviceId)
+    if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+    }
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, service, "Service Fetched Successfully")
+        )
+});
+
 // UpdateService
 const updateService = asyncHandler(async (req, res) => {
     const { serviceId } = req.params;
 
+    console.log(serviceId);
     const { name, description, category, price } = req.body;
     const serviceDetails = await Service.findById(serviceId);
 
-    const imgId = serviceDetails.serviceImage.imgId;
-
-    const serviceImageLocalPath = req.file.path;
-
-    if (!serviceImageLocalPath) {
-        return res.status(400).json({message:"Image is required"})
+    console.log(name);
+    console.log(description);
+    console.log(category);
+    console.log(price);
+    // console.log("exceeds");
+    if (!serviceDetails) {
+        return res.status(404).json({ message: "Service not found" });
     }
-    
-    const serviceImage = await uploadOnCloudinary(serviceImageLocalPath);
-
-    if (!serviceImage) {
-        return res.status(400).json({message:"Error while uploading a ServiceImage"})
-    }
-    // Delete From Cloudinary
-    const deleteImage = await deleteFromCloudinary(imgId)
-
     // Service Update
     const service = await Service.findByIdAndUpdate(
         serviceId,
@@ -88,10 +93,6 @@ const updateService = asyncHandler(async (req, res) => {
             $set: {
                 name,
                 description,
-                serviceImage: {
-                    imgId: serviceImage.public_id,
-                    imgUrl: serviceImage.url
-                },
                 category,
                 price
             }
@@ -102,30 +103,76 @@ const updateService = asyncHandler(async (req, res) => {
     )
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200,{service},"Service Updated")
+        .status(200)
+        .json(
+            new ApiResponse(200, {service} , "Service Updated")
+        )
+})
+
+// UpdateServiceImg
+const updateServiceImg = asyncHandler(async (req, res) => {
+    const { serviceId } = req.params;
+
+    const serviceDetails = await Service.findById(serviceId);
+
+
+    const imgId = serviceDetails.serviceImage.imgId;
+
+    const serviceImageLocalPath = req.file.path;
+
+    if (!serviceImageLocalPath) {
+        return res.status(400).json({ message: "Image is required" })
+    }
+
+    const serviceImage = await uploadOnCloudinary(serviceImageLocalPath);
+
+    if (!serviceImage) {
+        return res.status(400).json({ message: "Error while uploading a ServiceImage" })
+    }
+
+    // Delete From Cloudinary
+    const deleteImage = await deleteFromCloudinary(imgId)
+
+    const service = await Service.findByIdAndUpdate(
+        serviceId,
+        {
+            serviceImage: {
+                imgId: serviceImage.public_id,
+                imgUrl: serviceImage.url
+            },
+        },
+        {
+            new: true
+        }
     )
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, { service }, "Image Updated")
+        )
+
 })
 
 
 // Delete Service 
-const deleteService = asyncHandler(async (req,res)=>{
-    const { serviceId } = req.params;
+const deleteService = asyncHandler(async (req, res) => {
+    const { serviceId } = req.body;
 
     const service = await Service.findById(serviceId);
 
-    if(!service){
-        return res.status(400).json({message:"Data Not found"})
+    if (!service) {
+        return res.status(400).json({ message: "Data Not found" })
     }
     const imgId = service.serviceImage.imgId;
     // Code For Delete Img from cloud 
     const deletedService = await Service.findByIdAndDelete(serviceId)
     await deleteFromCloudinary(imgId);
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200,{},"Service Deleted Successfully")
-    )
+        .status(200)
+        .json(
+            new ApiResponse(200, {}, "Service Deleted Successfully")
+        )
 })
-export { addService, getService, updateService,deleteService}
+
+
+export { addService, getService, updateService, deleteService, getOneService ,updateServiceImg}

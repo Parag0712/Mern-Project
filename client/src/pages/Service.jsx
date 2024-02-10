@@ -11,15 +11,23 @@ import asset12 from '../assets/asset 12.svg';
 import asset13 from '../assets/asset 13.svg';
 import Card from '../Components/Common/Card';
 import { dataService } from '../Backend/service';
+import { useDispatch } from 'react-redux';
+import { loadingStart, loadingStop } from '../App/loadingSlice';
 
 
 function Service() {
+  const dispatch= useDispatch()
+
+
   const [service, setService] = useState([]);
   useEffect(() => {
+  dispatch(loadingStart())
     dataService.getService().then((data) => {
       setService(data.data);
     }).catch((error) => {
       console.log(error);
+    }).finally(()=>{
+      dispatch(loadingStop())
     })
   }, [])
 
@@ -41,6 +49,7 @@ function Service() {
                     serviceImgUrl={value?.serviceImage?.imgUrl}
                     serviceName={value?.name}
                     serviceDetails={value?.category}
+                    
                   >
                   </Card>
                 })

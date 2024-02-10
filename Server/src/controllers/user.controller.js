@@ -4,6 +4,7 @@ import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import { deleteFromCloudinary, uploadOnCloudinary } from '../utils/cloudinary.js';
 import { User } from '../models/user.model.js';
+import { log } from 'console';
 
 // Validate Field
 function validateField(value, fieldName) {
@@ -28,7 +29,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
     try {
         const user = await User.findById(userId);
         const accessToken = user.generateAccessToken();
-        const refreshToken =  user.generateRefreshToken();
+        const refreshToken = user.generateRefreshToken();
 
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
@@ -51,7 +52,7 @@ const register = asyncHandler(async (req, res) => {
     if (!number || isNaN(number) || number < 10) {
 
         return res.status(401).json({
-            message:"Number is required and must be a number greater than or equal to 10"
+            message: "Number is required and must be a number greater than or equal to 10"
         })
     }
 
@@ -60,9 +61,12 @@ const register = asyncHandler(async (req, res) => {
     const existedUser = await User.findOne({
         $or: [{ username: username }, { email: email }, { number: number }]
     });
-    if (existedUser) {return res.status(409).json({
-        message:"User with email or username or number already exists"
-    })}
+    
+    if (existedUser) {
+        return res.status(409).json({
+            message: "User with email or username or number already exists"
+        })
+    }
 
 
     // Get File from multer
@@ -74,11 +78,11 @@ const register = asyncHandler(async (req, res) => {
         avatarImage = await uploadOnCloudinary(avatarLocalPath);
         if (!avatarImage) {
             return res.status(400).json(
-                {message:"Error while uploading a avatar"}
+                { message: "Error while uploading a avatar" }
             )
         }
     }
-    
+
     // Create User In Database
     const user = await User.create({
         username: username,
@@ -87,7 +91,7 @@ const register = asyncHandler(async (req, res) => {
         isAdmin: isAdmin || false,
         avatar: {
             imgId: avatarImage?.public_id || "",
-            imgUrl: avatarImage?.url || "" 
+            imgUrl: avatarImage?.url || ""
         },
         password: password,
     })
@@ -98,7 +102,7 @@ const register = asyncHandler(async (req, res) => {
 
     if (!user) {
         return res.status(500).json(
-            {message:"Something went wrong while registering the user"}
+            { message: "Something went wrong while registering the user" }
         )
     }
 
@@ -108,7 +112,6 @@ const register = asyncHandler(async (req, res) => {
     //store in cookie 
     const options = {
         httpOnly: true,
-        secure: true
     }
 
     // Send Response 
@@ -132,7 +135,7 @@ const login = asyncHandler(async (req, res) => {
     console.log(email);
     if (!username && !email) {
         return res.status(400).json({
-            message:"Username or Email is required"
+            message: "Username or Email is required"
         })
     }
     validateField(password);
@@ -144,13 +147,13 @@ const login = asyncHandler(async (req, res) => {
 
 
     // if not exist in database then send error
-    if (!user) { return res.status(404).json({message:"User does Not Exist"}) }
+    if (!user) { return res.status(404).json({ message: "User does Not Exist" }) }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     // If Password Is wrong so send error
     if (!isPasswordValid) {
-        return res.status(401).json({message:"Invalid user credentials"})
+        return res.status(401).json({ message: "Invalid user credentials" })
     }
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
@@ -214,14 +217,27 @@ const getUserDetails = asyncHandler(async (req, res) => {
         )
 });
 
+// GetUserDetails
+const getUsersDetails = asyncHandler(async (req, res) => {
+    const loggedInUserId = req.user._id;
+    const users = await User.find({ _id: { $ne: loggedInUserId }, isAdmin: false }); // Exclude the logged-in user
+
+    return res.status(200)
+        .json(
+            new ApiResponse(200, { users }, "All Users Fetched Successfully")
+        )
+});
+
+// updateAccountDetails
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { email, number, password } = req.body;
 
     validateField(email);
+    validateField(email);
     validateField(password);
 
     if (!number || isNaN(number) || number < 10) {
-        return res.status(401).json({message:"Number is required and must be a number greater than or equal to 10"})
+        return res.status(401).json({ message: "Number is required and must be a number greater than or equal to 10" })
     }
 
 
@@ -229,7 +245,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     const user = await User.findOne({ _id: req.user._id });
 
     // if not exist in database then send error
-    if (!user) { return res.status(404).json({message:"User does Not Exist"}) }
+    if (!user) { return res.status(404).json({ message: "User does Not Exist" }) }
     // if (!user) { throw new (404, "User does Not Exist"); }
 
     const isPasswordValid = await user.isPasswordCorrect(password)
@@ -237,7 +253,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
     // Password valid or not 
     if (!isPasswordValid) {
-        return res.status(401).json({message:"Invalid user credentials"})
+        return res.status(401).json({ message: "Invalid user credentials" })
         // throw new (401, "Invalid user credentials");
     }
 
@@ -267,12 +283,33 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     }
 });
 
+
+// Delete User Account
+const deleteUser = asyncHandler(async (req, res) => {
+    try {
+        const id = req.body;
+        const user = await User.findByIdAndDelete(id.id);
+        if (!user) {
+            return res.status(404).json(new ApiResponse(404, {}, "User not found"));
+        }
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(200, {}, "Account Deleted successfully")
+            )
+
+    } catch (error) {
+        throw new ApiError(401, error)
+    }
+});
+
 const updateUserAvatarImage = asyncHandler(async (req, res) => {
 
-    
+
     const avatarLocalPath = req.file.path;
     if (!avatarLocalPath) {
-        return res.status(400).json({message:"Avatar Image is required"})
+        return res.status(400).json({ message: "Avatar Image is required" })
 
         // throw new ApiError(400, "Avatar Image is required");
     }
@@ -286,7 +323,7 @@ const updateUserAvatarImage = asyncHandler(async (req, res) => {
 
     const avatarImage = await uploadOnCloudinary(avatarLocalPath);
     if (!avatarImage) {
-        return res.status(400).json({message:"Error while uploading a avatar"})
+        return res.status(400).json({ message: "Error while uploading a avatar" })
 
         // throw new ApiError(400, "Error while uploading a avatar");
     }
@@ -304,4 +341,5 @@ const updateUserAvatarImage = asyncHandler(async (req, res) => {
         )
 })
 
-export { register, login, logout, getUserDetails, updateAccountDetails, updateUserAvatarImage }
+
+export { register, login, logout, getUserDetails, updateAccountDetails, updateUserAvatarImage, getUsersDetails, deleteUser }

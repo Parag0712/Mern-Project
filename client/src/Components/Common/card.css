@@ -11,9 +11,10 @@
     transition: all .4s ease-in-out;
     border-radius: 10px;
 }
+
 .card-img img{
     object-fit: contain;
-    width: 100%;
+    max-width: 100%;
 }
 
 .card:hover {
@@ -42,4 +43,9 @@ svg {
     margin-top: 10px;
     font-size: 16px;
     line-height: 26px;
+}
+
+.btn-container{
+    display: flex;
+    gap: 10px;
 }

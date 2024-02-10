@@ -7,22 +7,26 @@ import axios from 'axios';
 import Footer from './Components/Footer/Footer';
 import { AuthServices } from './Backend/auth';
 import { useDispatch, useSelector } from 'react-redux'
-import authSlice, { login, logout, updateAvatar } from './App/authSlice';
+import authSlice, { authLoaded, login, logout, updateAvatar } from './App/authSlice';
 import { loadingStart, loadingStop } from './App/loadingSlice';
 import { useState } from 'react';
-import "./app.css"
-import {ToastContainer,toast} from 'react-toastify'
+import "./App.css"
+import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
 // App 
 //Entry Point 
 function App() {
   const [serverError, setServerError] = useState();
+  const state = useSelector((state) => {
+    return state.auth
+  })
 
+  // TODO:Future Work
+  // console.log(state.userData?.isAdmin);
   const loading = useSelector((state) => {
     return state.loading;
   });
-
 
   const controls = useAnimation();
   useEffect(() => {
@@ -30,7 +34,9 @@ function App() {
     controls.start({ opacity: loading.loading ? 0 : 1 });
   }, [loading.loading, controls]);
 
-  const dispatch = useDispatch()
+  // dispatch
+  const dispatch = useDispatch();
+
   useEffect(() => {
     // Loading Start
     dispatch(loadingStart())
@@ -38,8 +44,10 @@ function App() {
       then((data) => {
         if (data) {
           const userData = data.data.user;
+          const datas = data.data;
           const avatarUrl = userData.avatar;
-          dispatch(updateAvatar({avatarUrl}))
+
+          dispatch(updateAvatar({ avatarUrl }))
           dispatch(login({ userData }));
         } else {
           dispatch(logout());
@@ -47,25 +55,25 @@ function App() {
       }).catch((error) => {
         setServerError(error);
       }).finally(() => {
+        dispatch(authLoaded())
         dispatch(loadingStop());
       })
   }, []);
+
   return (
     <div>
-      
-
       <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       {loading.loading && <Loading></Loading>}
       <motion.main
         initial={{ opacity: 0 }}
@@ -73,7 +81,6 @@ function App() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
         className={loading.loading ? 'hidden' : ''}>
-
         <Header />
         <Outlet />
         <Footer />
