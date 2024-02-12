@@ -24,7 +24,7 @@ function AdminForm({ service, edit }) {
     const [descError, setDesc] = useState();
 
     // name,category,description,price,serviceImage
-    const { register, handleSubmit, watch, setValue, control, getValues ,reset} = useForm({
+    const { register, handleSubmit, watch, setValue, control, getValues, reset } = useForm({
         defaultValues: {
             name: service?.name || "",
             id: service?.id || "",
@@ -142,11 +142,11 @@ function AdminForm({ service, edit }) {
                     </div>
                 </div>
                 <div className="desc">
-                    <Rte label='description :'
-                        defaultValue={getValues('description') || ''}
-                        name="description"
-                        control={control}
-                    />
+                    <textarea rows="4" 
+                    placeholder="description"
+                        className='form-input'
+                        {...register("description", {required:true})}>
+                    </textarea>
                 </div>
                 <input className='submit form-input btn' value={edit ? "Edit Form" : "Add Form"} type="submit" />
             </form>

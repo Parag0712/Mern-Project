@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom"
 import './Header.css'
 import Container from "../Common/Container";
-import { useEffect, useState } from "react";
+import { useDebugValue, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, updateAvatar } from "../../App/authSlice";
 import { AuthServices } from "../../Backend/auth";
@@ -13,6 +13,8 @@ const Header = () => {
     const user = useSelector((state) => {
         return state.auth.status;
     });
+
+    const [img,setImg] = useState(userImg);
 
     const navigate = useNavigate();
     // NavItem
@@ -49,10 +51,10 @@ const Header = () => {
         },
     ];
 
-
     const auth = useSelector((state) => {
         return state.auth
     });
+
     const [file, setFile] = useState(null);
     const dispatch = useDispatch();
 
