@@ -74,6 +74,9 @@ function BigFeature() {
                     <p>Shubh's unique design and development of applications accomplishing specific business goals benefit two
                         different kinds of users.</p>
                 </div>
+                <div className="Ethereum-section-right-up">
+                    <img src={asset14} alt="" />
+                </div>
             </section>
         </>
     )
