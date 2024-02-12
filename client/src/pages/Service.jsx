@@ -16,17 +16,17 @@ import { loadingStart, loadingStop } from '../App/loadingSlice';
 
 
 function Service() {
-  const dispatch= useDispatch()
+  const dispatch = useDispatch()
 
 
   const [service, setService] = useState([]);
   useEffect(() => {
-  dispatch(loadingStart())
+    dispatch(loadingStart())
     dataService.getService().then((data) => {
       setService(data.data);
     }).catch((error) => {
       console.log(error);
-    }).finally(()=>{
+    }).finally(() => {
       dispatch(loadingStop())
     })
   }, [])
@@ -39,17 +39,17 @@ function Service() {
           <section className="card-details flex-colum container">
             <div className="card-section-header">
               <h2 style={{ textAlign: "center" }}>All Services</h2>
-            </div> 
+            </div>
             <div className="cards-section">
               {/* Card components */}
               {
                 service.map((value) => {
                   return <Card
+                    img="true"
                     key={value._id}
                     serviceImgUrl={value?.serviceImage?.imgUrl}
                     serviceName={value?.name}
                     serviceDetails={value?.category}
-                    
                   >
                   </Card>
                 })

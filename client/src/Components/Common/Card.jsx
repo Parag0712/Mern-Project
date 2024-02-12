@@ -5,10 +5,13 @@ import { dataService } from '../../Backend/service'
 import { useDispatch } from 'react-redux'
 import { updateService } from '../../App/updateSlice'
 import { useNavigate } from 'react-router-dom'
-// import { updateService } from '../../App/updateSlice'
+
+import parse from 'html-react-parser'
+
 
 
 function Card({ serviceImgUrl, serviceName, serviceDetails, id = "", img = true, button = false, ...props }) {
+    console.log(serviceDetails);
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const handleDelete = () => {
@@ -28,14 +31,14 @@ function Card({ serviceImgUrl, serviceName, serviceDetails, id = "", img = true,
     };
     return (
         <div className="card">
-            {img &&
+            {img=="true" &&
                 <div className="card-img">
                     <img src={serviceImgUrl || ""} alt="" />
                 </div>
             }
             <div className="card-details">
                 <h3>{serviceName}</h3>
-                <p>{serviceDetails}</p>
+                <p>{parse(serviceDetails)}</p>
             </div>
             {button &&
                 <div className='btn-container'>

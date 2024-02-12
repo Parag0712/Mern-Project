@@ -21,7 +21,6 @@ function AdminService() {
     const data = useSelector((state) => {
         return state.update
     })
-    console.log(data);
 
     useEffect(() => {
         dispatch(loadingStart())
@@ -52,13 +51,14 @@ function AdminService() {
                         <div className="cards-section">
                             {/* Card components */}
                             {
-                                services.map((value) => {
+                                services?.map((value) => {
                                     console.log(value);
                                     return <Card
+                                    img="true"
                                         key={value?._id}
                                         id={value?._id}
                                         button="true"
-                                        serviceImgUrl={value?.serviceImage?.imgUrl}
+                                        serviceImgUrl={value.serviceImage.imgUrl}
                                         serviceName={value?.name}
                                         serviceDetails={value?.price}
                                     >

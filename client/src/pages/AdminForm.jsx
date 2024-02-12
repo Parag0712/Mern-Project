@@ -10,8 +10,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function AdminForm({ service, edit }) {
 
+    const { id } = useParams()
     if (edit) {
-        const { id } = useParams()
         if (!service?.name) {
             return
         }
@@ -37,7 +37,7 @@ function AdminForm({ service, edit }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleService = (data) => {
-        if (edit) {
+        if (edit == "true") {
             dataService.updateService(data, id).then((val) => {
                 toast.success("Service Updated")
                 navigate("/adminservice")
@@ -79,9 +79,8 @@ function AdminForm({ service, edit }) {
                             error={nameError} // Make sure `nameError` is defined and passed as a prop  
                             {...register("name", {
                                 validate: {
-
                                     matchPattern: (value) => {
-                                        const isValid = /^[a-zA-Z0-9]+$/.test(value);
+                                        const isValid = /^[a-zA-Z0-9 ,\-]+$/.test(value);
                                         if (isValid) {
                                             setNameError("");  // Clear the error message
                                         } else {
@@ -123,7 +122,7 @@ function AdminForm({ service, edit }) {
                             {...register("price", {
                                 validate: {
                                     matchPattern: (value) => {
-                                        const isValid = /^[a-zA-Z0-9]+$/.test(value);
+                                        const isValid = /^[a-zA-Z0-9 ,\-]+$/.test(value);
                                         if (isValid) {
                                             setPriceError("");
                                         } else {

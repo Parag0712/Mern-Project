@@ -87,9 +87,8 @@ const Header = () => {
     const toggleMenu = () => {
         setMobile(!isMobile);
     }
-
+    
     return (
-        <Container>
             <header>
                 <div className="container flex header">
                     <NavLink to="/">
@@ -136,7 +135,6 @@ const Header = () => {
                     </a>
                 </div>
             </header>
-        </Container>
     )
 }
 export default Header

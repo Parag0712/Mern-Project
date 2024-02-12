@@ -1,20 +1,18 @@
+header{
+    position: relative;
+
+}
+
 .header {
     min-height: 60px;
     justify-content: space-between;
     padding: 15px 0px;
-    position: relative;
     align-items: center;
+    padding: 0px 20px;
 }
 
-.header::before {
-    content: "";
-    width: 100px;
-    height: 4px;
-    background: var(--asset-color);
-    border-radius: 50px 0 0 50px;
-    position: absolute;
-    left: 30px;
-    bottom: -3px;
+.nav-bar{
+    justify-content: end;
 }
 
 
@@ -26,6 +24,7 @@
 }
 
 .nav-links ul {
+    
     font-size: 18px;
     align-items: center;
     justify-content: flex-end;
@@ -80,6 +79,9 @@ a:hover {
     }
 
     .nav-bar ul {
+        
+    background-color: #f4f3ff !important; 
+
         flex-direction: column;
         width: 100%;
         gap: 20px;
@@ -94,6 +96,7 @@ a:hover {
     }
 
     .nav-bar {
+        width: 100%;
         opacity: 0;
         position: absolute;
         top: -300px;

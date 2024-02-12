@@ -3,7 +3,7 @@
     flex-direction: column;
     row-gap: 20px;
     width: 100%;
-    /* max-width: 400px; */
+    max-width: 300px;
     margin: 0;
     padding: 20px 20px 20px;
     height: 100%;
@@ -12,9 +12,14 @@
     border-radius: 10px;
 }
 
+.card-img{
+
+}
 .card-img img{
-    object-fit: contain;
-    max-width: 100%;
+    width: 100%;
+    border-radius: 10px;
+    object-fit: fill;
+    height: 200px;
 }
 
 .card:hover {
