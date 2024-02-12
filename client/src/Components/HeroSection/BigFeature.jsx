@@ -47,85 +47,6 @@ function BigFeature() {
                             scalability allows us to fulfill any of the upcoming generation's requirements. </p>
                     </div>
                 </section>
-
-                {/* Third section */}
-                <section style={{ backgroundColor: '#FBFBFB', borderRadius: '10px', padding: '90px 0px' }}>
-                    <section className="card-details flex-colum container">
-                        <div className="card-section-header">
-                            <h2>Built for the next generation <br />of business <span className="blue-text">challenges.</span></h2>
-                        </div>
-                        <div className="cards-section">
-                            {/* Card components */}
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset8} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Scalability</h3>
-                                    <p>Enables the blockchain to scale infinitely and prevents bloat in the main chain, which
-                                        reduces its speed and cost of transacting.</p>
-                                </div>
-                            </div>
-
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset9} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Smooth Asset Transfer</h3>
-                                    <p>Allows participants to have their assets and identity on multiple blockchains at once with no
-                                        permission necessary from anyone else.</p>
-                                </div>
-                            </div>
-
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset10} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Proof-of-Stake Consensus</h3>
-                                    <p>A Proof of Stake (PoS) consensus algorithm is like a democracy where validators' stake in the
-                                        network decides which transactions will be processed.</p>
-                                </div>
-                            </div>
-
-
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset11} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Trustless Transactions</h3>
-                                    <p>Our API or client-side software application let's merchants easily integrate with their
-                                        current PoS systems to accept cryptocurrency payments. Allowing them information to all the
-                                        transactions they have made.</p>
-                                </div>
-                            </div>
-
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset12} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Speed</h3>
-                                    <p>The transactions performed using Shubh sidechain are fast and efficient. This is done by
-                                        avoiding the need for processing on a single chain and hence preventing bloat.</p>
-                                </div>
-                            </div>
-
-                            <div className="card">
-                                <div className="card-img">
-                                    <img src={asset13} alt="" />
-                                </div>
-                                <div className="card-details">
-                                    <h3>Low Cost</h3>
-                                    <p>Minimal hardware usage, low processing requirements on the main chain, and bloat prevention
-                                        allows Shubh to have minuscule transaction fees.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </section>
             </Container>
             <section className="email-section-background">
                 <section className="email-section container flex">
@@ -152,31 +73,6 @@ function BigFeature() {
                         state transitions, improving block generation time and throughput.</p>
                     <p>Shubh's unique design and development of applications accomplishing specific business goals benefit two
                         different kinds of users.</p>
-                </div>
-                <div className="Ethereum-section-right-up">
-                    <img src={asset14} alt="" />
-                </div>
-                <div className="card pointer-event-disable">
-                    <div className="card-img">
-                        <img src="/assets/asset 22.svg" alt="" />
-                    </div>
-                    <div className="card-details">
-                        <h3>Business Owners</h3>
-                        <p>Businesses will be able to utilize blockchain technology for seamless transactions without having to
-                            worry about the long wait times and high transaction costs. This should facilitate faster exchanges
-                            which were not possible at scale before.</p>
-                    </div>
-                </div>
-                <div className="card pointer-event-disable">
-                    <div className="card-img">
-                        <img src={asset15} alt="" />
-                    </div>
-                    <div className="card-details">
-                        <h3>Investors</h3>
-                        <p>Investors will be able to use their cryptocurrencies within the Shubh ecosystem for trading. The PoS
-                            system to make profitable trades via faster cheaper crypto transactions. This is possible while
-                            still maintaining its decentralized features.</p>
-                    </div>
                 </div>
             </section>
         </>
