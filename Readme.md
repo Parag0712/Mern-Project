@@ -17,7 +17,8 @@ The Subh Network project is a platform where users can showcase their services t
 - Frontend:
   - React.js
   - React Form Hook
-  
+  - redux
+
 - Backend:
   - Node.js
   - Express.js
