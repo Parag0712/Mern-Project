@@ -35,8 +35,6 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/contacts", contactRouter);
 app.use("/api/v1/services", serviceRouter);
 
-
-
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
 app.get('*', (req, res) => {
