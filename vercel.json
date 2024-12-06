@@ -1,5 +1,3 @@
-
-
 {
   "version": 2,
   "name": "native-server",
@@ -11,7 +9,7 @@
     {
       "src": "client/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "client/build" }
+      "config": { "distDir": "client/dist" }
     }
   ],
   "routes": [
@@ -21,7 +19,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/client/$1"
+      "dest": "client/dist/$1"
     }
   ]
 }
