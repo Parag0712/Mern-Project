@@ -1,27 +1,6 @@
 {
   "version": 2,
   "name": "native-server",
-  "builds": [
-    {
-      "src": "Server/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": { 
-        "distDir": "client/dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "Server/index.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "client/dist/$1"
-    }
-  ]
+  "builds": [{ "src": "Sever/index.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/index.js" }]
 }
